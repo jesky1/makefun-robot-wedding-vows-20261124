@@ -40,6 +40,11 @@ function validateLine(line) {
   if (line.includes('\n') || line.includes('\r')) {
     throw new Error('Line must be a single line (no newline characters).');
   }
+  // Control characters (tabs included) would corrupt the judge's read
+  // of the file, so reject them outright — the gate expects plain text.
+  if (/[\u0000-\u001F\u007F]/.test(line)) {
+    throw new Error('Line must not contain control characters.');
+  }
   // The gate rejects whitespace-only text, so fail loudly here too.
   if (line.trim().length === 0) {
     throw new Error('Line must not be only whitespace.');
